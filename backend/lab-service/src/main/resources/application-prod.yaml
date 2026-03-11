@@ -1,0 +1,27 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:true}
+      timeout: 2000ms
+      connect-timeout: 2000ms
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:}:${DATABASE_PORT:5432}/${DATABASE_NAME:lab_service}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false
+server:
+  port: 8080
+logging:
+  level:
+    root: warn
+    xyz:
+      catuns:
+        lab: info

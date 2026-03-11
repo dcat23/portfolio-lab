@@ -1,0 +1,21 @@
+spring:
+  data:
+    redis:
+      host: redis
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:postgres}:${DATABASE_PORT:5432}/${DATABASE_NAME:lab_service}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false
+server:
+  port: 8080
+logging:
+  level:
+    root: warn
+    xyz:
+      catuns:
+        lab: info
