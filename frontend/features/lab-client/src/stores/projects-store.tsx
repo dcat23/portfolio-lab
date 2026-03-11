@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { Project } from '../lib/types/project';
+import type { Project } from '../lib/types/';
 
 export const filters = ["all", "shipped", "in-progress", "archived"] as const;
 

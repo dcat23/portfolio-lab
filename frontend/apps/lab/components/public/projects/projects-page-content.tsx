@@ -128,7 +128,7 @@ export function ProjectsPageContent({ projects }: Props) {
   const [activeFilter, setActiveFilter] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const [hoveredProject, setHoveredProject] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -224,16 +224,16 @@ export function ProjectsPageContent({ projects }: Props) {
                 "group relative overflow-hidden rounded-xl border bg-card/40 p-6 sm:p-7 glass transition-all duration-400 active:scale-[0.99] hover-lift opacity-0",
                 isVisible && "animate-fade-in-up",
                 hoveredProject === project.id && "border-primary/40 bg-card/70",
-                "highlight" in project && project.highlight
+                project.featured
                   ? "sm:col-span-2 lg:col-span-2 border-primary/30 bg-gradient-to-br from-primary/8 via-card/50 to-primary/8"
                   : "border-border/60",
-                project.featured && !("highlight" in project && project.highlight) && "sm:col-span-2 lg:col-span-1",
+                project.featured && !(project.featured) && "sm:col-span-2 lg:col-span-1",
               )}
               style={{ animationDelay: `${(index % 6) * 80 + 200}ms` }}
               onMouseEnter={() => setHoveredProject(project.id)}
               onMouseLeave={() => setHoveredProject(null)}
             >
-              {"highlight" in project && project.highlight && (
+              {project.featured && (
                 <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-3.5 py-1.5 animate-pulse-glow">
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
                   <span className="font-mono text-[10px] uppercase tracking-wider text-primary font-medium">
@@ -245,7 +245,7 @@ export function ProjectsPageContent({ projects }: Props) {
               <div
                 className={cn(
                   "absolute right-5 top-5 flex items-center gap-2.5",
-                  "highlight" in project && project.highlight && "top-5",
+                  project.featured && "top-5",
                 )}
               >
                 <span
@@ -262,7 +262,7 @@ export function ProjectsPageContent({ projects }: Props) {
               <div
                 className={cn(
                   "mb-5 font-mono text-xs text-muted-foreground",
-                  "highlight" in project && project.highlight && "mt-10",
+                  project.featured && "mt-10",
                 )}
               >
                 {project.year}
@@ -271,7 +271,7 @@ export function ProjectsPageContent({ projects }: Props) {
               <h3
                 className={cn(
                   "mb-3 font-bold tracking-tight transition-all duration-300 group-hover:text-gradient",
-                  "highlight" in project && project.highlight ? "text-xl sm:text-2xl" : "text-lg sm:text-xl",
+                  project.featured ? "text-xl sm:text-2xl" : "text-lg sm:text-xl",
                 )}
               >
                 {project.title}
@@ -280,7 +280,7 @@ export function ProjectsPageContent({ projects }: Props) {
               <p
                 className={cn(
                   "mb-5 text-sm leading-relaxed text-muted-foreground",
-                  "highlight" in project && project.highlight ? "line-clamp-3" : "line-clamp-2",
+                  project.featured ? "line-clamp-3" : "line-clamp-2",
                 )}
               >
                 {project.description}
