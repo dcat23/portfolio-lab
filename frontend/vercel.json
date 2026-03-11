@@ -1,5 +1,5 @@
 {
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "npx nx reset && NX_DAEMON=false npx nx build lab --prod",
+  "installCommand": "npm install",
+  "buildCommand": "npx nx build lab",
   "outputDirectory": "dist/apps/lab/.next"
 }
