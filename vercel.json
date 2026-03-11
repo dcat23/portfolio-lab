@@ -1,6 +1,5 @@
 {
-  "rootDirectory": "frontend",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "npx nx reset && NX_DAEMON=false npx nx build lab --prod",
-  "outputDirectory": "dist/apps/lab/.next"
+  "installCommand": "cd frontend && pnpm install --frozen-lockfile",
+  "buildCommand": "cd frontend && npx nx reset && NX_DAEMON=false npx nx build lab --prod",
+  "outputDirectory": "frontend/dist/apps/lab/.next"
 }
