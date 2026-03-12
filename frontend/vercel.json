@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm ci",
-  "buildCommand": "npx nx reset && npx nx build lab",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm exec nx build lab",
   "outputDirectory": "dist/apps/lab/.next"
 }
