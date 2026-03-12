@@ -37,3 +37,5 @@ CLAUDE.md
 
 .env*
 !.env.example
+
+apps/app
