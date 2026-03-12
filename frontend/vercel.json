@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm dlx nx run-many --target=build --all",
-  "outputDirectory": "apps/lab/.next"
+  "buildCommand": "pnpm dlx nx run-many --target=build --all --verbose && ls && tree",
+  "outputDirectory": "dist/apps/lab/.next"
 }
