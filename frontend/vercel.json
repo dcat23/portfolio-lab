@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "NX_DAEMON=false NX_CACHE_PROJECT_GRAPH=false NX_VERBOSE_LOGGING=true pnpm exec nx build lab",
+  "buildCommand": "VERCEL_FORCE_NO_BUILD_CACHE=1 pnpm exec nx build ui --configuration=production --verbose",
   "outputDirectory": "dist/apps/lab/.next"
 }
