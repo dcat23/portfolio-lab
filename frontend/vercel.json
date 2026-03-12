@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm exec nx reset && pnpm exec nx graph && pnpm exec nx build lab",
+  "buildCommand": "pnpm exec nx reset && ls && pwd && pnpm exec nx build lab",
   "outputDirectory": "apps/lab/.next"
 }
