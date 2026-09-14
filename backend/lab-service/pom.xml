@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>xyz.catuns.spring</groupId>
 		<artifactId>base-starter-parent</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.4-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>xyz.catuns.lab</groupId>
@@ -99,12 +99,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>repolite-releases</id>
-			<name>repolite-releases</name>
-			<url>https://repolite.catuns.xyz/releases</url>
-		</repository>
-	</repositories>
-
 </project>
