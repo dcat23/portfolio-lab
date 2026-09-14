@@ -33,8 +33,7 @@ export async function recordVisit(input: RecordVisitInput): Promise<VisitorRecor
     ? classifyReferrer(input.referrer, input.utmSource)
     : (existing?.lastReferrerCategory ?? 'direct');
 
-  // const isNewSession = !existing || now - existing.lastSeen > SESSION_GAP_MS;
-  const isNewSession = true
+  const isNewSession = !existing || now - existing.lastSeen > SESSION_GAP_MS;
 
   const record: VisitorRecord = {
     visitorId: input.visitorId,
@@ -66,7 +65,6 @@ export async function recordVisit(input: RecordVisitInput): Promise<VisitorRecor
     const [discordResponse] = await Promise.all([
       sendDiscordMessage({...record, ...response.data }),
     ]);
-
 
     log.info(discordResponse)
   }

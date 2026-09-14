@@ -1,8 +1,10 @@
-import { ProjectsPageContent } from "@app/lab/components/public/projects/projects-page-content";
-import { BASE_URL } from "@app/lab/lib/config/env";
+import { ProjectsPageContent } from '../../../components/public/projects/projects-page-content';
+import { BASE_URL } from '../../../lib/config/env';
 import { getProjects } from "@feature/lab-client/server";
 import type { Metadata } from "next";
+import { logger } from "@next-feature/logging/server";
 
+const log = logger.child({module: "projects-page"});
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -34,14 +36,18 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  const { data: projects, error } = await getProjects();
+  const response = await getProjects();
 
-  if (error) {
-    console.error('[lab] Error fetching projects:', error);
+  if (!response.success) {
+    if (response.error) {
+      log.warn(response.error.body);
+    } else {
+      log.warn(response.message);
+    }
   }
   return (
     <div className="pt-24">
-      <ProjectsPageContent projects={projects} />
+      <ProjectsPageContent projects={response.data} />
     </div>
   );
 }
