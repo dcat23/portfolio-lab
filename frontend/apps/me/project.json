@@ -1,0 +1,59 @@
+{
+  "name": "me",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/me",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/me"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/me"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "me:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "me:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "me:build:production",
+          "dev": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "apps/me/jest.config.cts"
+      }
+    },
+    "shadcn": {
+      "executor": "next-feature:shadcn",
+      "options": {}
+    }
+  }
+}
