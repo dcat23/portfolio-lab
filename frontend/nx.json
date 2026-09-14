@@ -89,7 +89,12 @@
       "axios": {
         "appProjectName": "lab"
       },
-      "store": {}
+      "store": {},
+      "dotenv": {
+        "projects": [
+          "me"
+        ]
+      }
     },
     "@nx/next": {
       "application": {

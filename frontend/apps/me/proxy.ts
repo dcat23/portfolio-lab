@@ -6,6 +6,7 @@ import {
   VISITOR_COOKIE_MAX_AGE,
   generateVisitorId,
 } from '@feature/visitor';
+import { logger } from '@next-feature/logging/server';
 
 // Not wrapping this with next-auth's `auth()` HOF: in next-auth@5.0.0-beta.27
 // its public types only cover App Route handlers (`ctx: { params }`), not
@@ -41,8 +42,9 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
       ip: getClientIp(request),
       userAgent: request.headers.get('user-agent'),
       ownHost: request.nextUrl.hostname,
-    }).catch(() => {
+    }).catch((e) => {
       // Swallow errors — analytics must never break the response.
+      logger.warn(e, "error recording visit")
     }),
   );
 

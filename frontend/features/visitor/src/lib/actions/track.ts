@@ -2,7 +2,8 @@ import { visitorStore } from '../store';
 import type { VisitorRecord } from '../store/types';
 import { classifyReferrer, hostname } from '../utils/referrer';
 import { logger } from '@next-feature/logging/server';
-import { getIpDetails } from './ipapi';
+import { getIpDetails, IpDetails } from './ipapi';
+import { sendDiscordMessage } from './discord';
 const log = logger.child({ module: 'track' });
 // Repeat page views within this window count as the same visit; anything
 // after it (a fresh tab tomorrow, coming back next week) increments
@@ -32,7 +33,8 @@ export async function recordVisit(input: RecordVisitInput): Promise<VisitorRecor
     ? classifyReferrer(input.referrer, input.utmSource)
     : (existing?.lastReferrerCategory ?? 'direct');
 
-  const isNewSession = !existing || now - existing.lastSeen > SESSION_GAP_MS;
+  // const isNewSession = !existing || now - existing.lastSeen > SESSION_GAP_MS;
+  const isNewSession = true
 
   const record: VisitorRecord = {
     visitorId: input.visitorId,
@@ -54,16 +56,19 @@ export async function recordVisit(input: RecordVisitInput): Promise<VisitorRecor
     lastUtmSource: input.utmSource ?? existing?.lastUtmSource ?? null,
 
     visitCount: (existing?.visitCount ?? 0) + (isNewSession ? 1 : 0),
-
-    ipDetails: existing.ipDetails ?? null
   };
 
   if (isNewSession) {
     const response = await getIpDetails({ ip: record.lastIp });
-    if (response.success) {
-      record.ipDetails = response.data
-    }
-    // log.info(record, "New visitor");
+
+    log.info(record, 'recording visit');
+
+    const [discordResponse] = await Promise.all([
+      sendDiscordMessage({...record, ...response.data }),
+    ]);
+
+
+    log.info(discordResponse)
   }
   return visitorStore.upsert(record);
 }

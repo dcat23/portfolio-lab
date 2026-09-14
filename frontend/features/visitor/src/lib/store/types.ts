@@ -25,7 +25,6 @@ export interface VisitorRecord {
   // Incremented once per session (see SESSION_GAP_MS in track.ts), not per
   // page view.
   visitCount: number;
-  ipDetails: IpDetails | null;
 }
 
 export interface VisitorStore {

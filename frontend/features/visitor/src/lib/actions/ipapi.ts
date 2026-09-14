@@ -20,14 +20,38 @@ export type GetIpDetailsRequest = {
 export type GetIpDetailsResponse = IpDetails & {
 };
 
-export const getIpDetails = withApi(async (options: GetIpDetailsRequest) => {
-  const params = new URLSearchParams({
-    fields:
-      'country,regionName,city,district,zip,lat,lon,timezone,isp,org,as,mobile,proxy,hosting,query',
-  });
-  const endpoint = `/json/${options.ip}?` + params.toString();
-  return await api.get<GetIpDetailsResponse>(endpoint);
-}, {});
+export const getIpDetails = withApi(
+  async (options: GetIpDetailsRequest) => {
+    const params = new URLSearchParams({
+      fields:
+        'country,regionName,city,district,zip,lat,lon,timezone,isp,org,as,mobile,proxy,hosting,query',
+    });
+    const endpoint = `/json/${options.ip}?` + params.toString();
+    return await api.get<GetIpDetailsResponse>(endpoint);
+  },
+  {
+    fallbackData: {
+      query: '',
+      status: '',
+      country: '',
+      countryCode: '',
+      region: '',
+      regionName: '',
+      city: '',
+      zip: '',
+      lat: 0,
+      lon: 0,
+      timezone: '',
+      isp: '',
+      org: '',
+      as: '',
+      reverse: '',
+      mobile: false,
+      proxy: false,
+      hosting: false,
+    },
+  },
+);
 
 export interface IpDetails {
   query: string;
