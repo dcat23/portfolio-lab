@@ -13,14 +13,13 @@
 #   --help              Show this help message
 #
 # Services (default: all):
-#   event-ingest-service
-#   quizzer
+#   lab-service
 #
 # Examples:
 #   ./build-images.sh                                    # Build all services
 #   ./build-images.sh --push                             # Build and push all services
-#   ./build-images.sh --push --tag dev quizzer           # Build and push quizzer with 'dev' tag
-#   ./build-images.sh --tag v1.0.0 event-ingest-service  # Build event-ingest-service with 'v1.0.0' tag
+#   ./build-images.sh --push --tag dev lab-service       # Build and push lab-service with 'dev' tag
+#   ./build-images.sh --tag v1.0.0 lab-service           # Build lab-service with 'v1.0.0' tag
 
 set -e
 set -u

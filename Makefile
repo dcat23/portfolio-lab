@@ -1,10 +1,10 @@
-# Backend Makefile
+# Root Makefile
 # Simplified commands for building and deploying backend services
 
 .PHONY: help build build-push test clean docker-build docker-push
 
 
-# Services
+# Services (relative to backend/)
 SERVICES := lab-service
 
 help:
@@ -19,11 +19,11 @@ help:
 	@echo "Docker Commands (Spring Boot Buildpacks):"
 	@echo "  make docker-build       - Build Docker images locally"
 	@echo "  make docker-push        - Build and push images to Artifact Registry"
-	@echo "  make docker-build-SERVICE - Build specific service (e.g., make docker-build-quizzer)"
+	@echo "  make docker-build-SERVICE - Build specific service (e.g., make docker-build-lab-service)"
 	@echo ""
 	@echo "Individual Service Commands:"
-	@echo "  make build-SERVICE      - Build specific service (e.g., make build-quizzer)"
-	@echo "  make test-SERVICE       - Test specific service (e.g., make test-quizzer)"
+	@echo "  make build-SERVICE      - Build specific service (e.g., make build-lab-service)"
+	@echo "  make test-SERVICE       - Test specific service (e.g., make test-lab-service)"
 	@echo ""
 	@echo "Available services: $(SERVICES)"
 
@@ -31,57 +31,57 @@ help:
 build:
 	@for service in $(SERVICES); do \
 		echo "Building $$service..."; \
-		cd $$service && ./mvnw clean install -DskipTests || exit 1; \
-		cd ..; \
+		cd backend/$$service && ./mvnw clean install -DskipTests || exit 1; \
+		cd ../..; \
 	done
 
 # Run tests for all services
 test:
 	@for service in $(SERVICES); do \
 		echo "Testing $$service..."; \
-		cd $$service && ./mvnw test || exit 1; \
-		cd ..; \
+		cd backend/$$service && ./mvnw test || exit 1; \
+		cd ../..; \
 	done
 
 # Clean all services
 clean:
 	@for service in $(SERVICES); do \
 		echo "Cleaning $$service..."; \
-		cd $$service && ./mvnw clean || exit 1; \
-		cd ..; \
+		cd backend/$$service && ./mvnw clean || exit 1; \
+		cd ../..; \
 	done
 
 # Build Docker images locally using Spring Boot buildpacks
 docker-build:
 	@echo "Building Docker images..."
-	@../scripts/docker/build-images.sh
+	@scripts/docker/build-images.sh
 
 # Build and push Docker images to Artifact Registry
 docker-push:
 	@echo "Building and pushing Docker images..."
-	@../scripts/docker/build-images.sh --push
+	@scripts/docker/build-images.sh --push
 
 deploy:
 	@echo "Deploying services..."
-	@../scripts/gcloud/deploy-service.sh
+	@scripts/gcloud/deploy-service.sh
 
 
 
 # lab service targets
 build-lab-service:
-	cd lab-service && ./mvnw clean install
+	cd backend/lab-service && ./mvnw clean install
 
 test-lab-service:
-	cd lab-service && ./mvnw test
+	cd backend/lab-service && ./mvnw test
 
 docker-build-lab-service:
-	../scripts/docker/build-images.sh lab-service
+	scripts/docker/build-images.sh lab-service
 
 docker-push-lab-service:
-	../scripts/docker/build-images.sh --push lab-service
+	scripts/docker/build-images.sh --push lab-service
 
 deploy-lab-service:
-	../scripts/gcloud/deploy-service.sh lab-service
+	scripts/gcloud/deploy-service.sh lab-service
 
 # Quick shortcuts
 bl: build-lab-service

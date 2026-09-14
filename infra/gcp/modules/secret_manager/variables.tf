@@ -69,9 +69,8 @@ variable "secret_accessors" {
 
   # Example:
   # {
-  #   "kafka-api-key" = [
-  #     "serviceAccount:event-ingest@project.iam.gserviceaccount.com",
-  #     "serviceAccount:bandit-engine@project.iam.gserviceaccount.com"
+  #   "postgres-password" = [
+  #     "serviceAccount:lab-service-sa@project.iam.gserviceaccount.com"
   #   ]
   # }
 }

@@ -4,7 +4,7 @@
 # Set GCP Secret Manager Secrets from .env file
 # -----------------------------------------------------------------------------
 # This script reads values from the root .env file and populates
-# GCP Secret Manager secrets for the EduPulse platform.
+# GCP Secret Manager secrets for the portfolio-lab platform.
 #
 # Usage: ./set-secrets.sh <project-id>
 #
@@ -144,48 +144,41 @@ log_info "=== PostgreSQL Database Configuration ==="
 total_secrets=$((total_secrets + 4))
 
 if postgres_user=$(load_env_var "DATABASE_USER"); then
-    set_secret "postgres-user" "${postgres_user}" "PostgreSQL database username for quiz service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
+    set_secret "postgres-user" "${postgres_user}" "PostgreSQL database username for lab service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
 else
     log_warning "Skipping postgres-user"
     failed_secrets=$((failed_secrets + 1))
 fi
 
 if postgres_password=$(load_env_var "DATABASE_PASSWORD"); then
-    set_secret "postgres-password" "${postgres_password}" "PostgreSQL database password for quiz service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
+    set_secret "postgres-password" "${postgres_password}" "PostgreSQL database password for lab service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
 else
     log_warning "Skipping postgres-password"
     failed_secrets=$((failed_secrets + 1))
 fi
 
 if postgres_host=$(load_env_var "DATABASE_HOST"); then
-    set_secret "postgres-host" "${postgres_host}" "PostgreSQL database host for quiz service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
+    set_secret "postgres-host" "${postgres_host}" "PostgreSQL database host for lab service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
 else
     log_warning "Skipping postgres-host"
     failed_secrets=$((failed_secrets + 1))
 fi
 
-# Extract database name from host or use default
+# Extract database name from .env or use default
 if database_name=$(load_env_var "DATABASE_NAME" 2>/dev/null); then
-    set_secret "postgres-database" "${database_name}" "PostgreSQL database name for quiz service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
+    set_secret "postgres-database" "${database_name}" "PostgreSQL database name for lab service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
 else
     # Default database name if not specified
-    database_name="edupulse"
+    database_name="lab_service"
     log_info "Using default database name: ${database_name}"
-    set_secret "postgres-database" "${database_name}" "PostgreSQL database name for quiz service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
+    set_secret "postgres-database" "${database_name}" "PostgreSQL database name for lab service" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
 fi
 
 echo ""
 
-# AI Configuration (Optional)
-log_info "=== AI Configuration (Optional) ==="
-total_secrets=$((total_secrets + 2))
-
-if gemini_api_key=$(load_env_var "GEMINI_API_KEY" 2>/dev/null); then
-    set_secret "gemini-api-key" "${gemini_api_key}" "Google Gemini API key for AI-powered hint generation" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))
-else
-    log_warning "Skipping gemini-api-key (optional, will use Vertex AI if not provided)"
-    failed_secrets=$((failed_secrets + 1))
-fi
+# JWT Signing Key
+log_info "=== JWT Authentication ==="
+total_secrets=$((total_secrets + 1))
 
 if jwt_signing_key=$(load_env_var "JWT_SIGNING_KEY" 2>/dev/null); then
     set_secret "jwt-signing-key" "${jwt_signing_key}" "JWT signing key for session tokens" && successful_secrets=$((successful_secrets + 1)) || failed_secrets=$((failed_secrets + 1))

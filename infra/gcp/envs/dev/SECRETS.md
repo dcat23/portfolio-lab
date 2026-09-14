@@ -4,18 +4,18 @@ This guide explains how to configure and populate secrets on Google Cloud Platfo
 
 ## Overview
 
-GCP Secret Manager to securely store sensitive configuration values such as:
-- Kafka/Confluent Cloud credentials
+GCP Secret Manager is used to securely store sensitive configuration values such as:
 - Database connection details
-- API keys for AI services
+- Cache (Redis) credentials
 - JWT signing keys
+- GitHub OAuth tokens
 
 The secrets are automatically created by Terraform, but their values must be populated separately using the `set-secrets.sh` script.
 
 ## Prerequisites
 
 1. **GCP Project**: You need a GCP project with billing enabled
-   - Project ID: 
+   - Project ID: `catuns-spring-boot` (see `terraform.tfvars`)
 
 2. **Authentication**: Authenticate with gcloud CLI
    ```bash
@@ -40,18 +40,25 @@ The secrets are automatically created by Terraform, but their values must be pop
 The following secrets must be populated for the platform to function:
 
 #### Database (PostgreSQL)
-| Secret Name | Environment Variable | Description |
-|------------|---------------------|-------------|
-| `postgres-host` | `DATABASE_HOST` | PostgreSQL host (e.g., Neon, Cloud SQL endpoint) |
-| `postgres-database` | `DATABASE_NAME` | Database name (defaults to `edupulse` if not provided) |
-| `postgres-user` | `DATABASE_USER` | Database username |
-| `postgres-password` | `DATABASE_PASSWORD` | Database password |
+| Secret Name         | Environment Variable | Description                                               |
+|---------------------|----------------------|-----------------------------------------------------------|
+| `postgres-host`     | `DATABASE_HOST`      | PostgreSQL host (e.g., Neon, Cloud SQL endpoint)          |
+| `postgres-database` | `DATABASE_NAME`      | Database name (defaults to `lab_service` if not provided) |
+| `postgres-user`     | `DATABASE_USER`      | Database username                                         |
+| `postgres-password` | `DATABASE_PASSWORD`  | Database password                                         |
 
-#### AI Configuration (Optional)
-| Secret Name | Environment Variable | Description |
-|------------|---------------------|-------------|
-| `gemini-api-key` | `GEMINI_API_KEY` | Google Gemini API key (optional, can use Vertex AI instead) |
-| `jwt-signing-key` | `JWT_SIGNING_KEY` | JWT signing key (auto-generated if not provided) |
+#### Cache (Redis / Upstash)
+| Secret Name       | Environment Variable | Description                          |
+|--------------------|----------------------|---------------------------------------|
+| `redis-host`       | `REDIS_HOST`         | Redis host (defaults to `6379` port) |
+| `redis-port`       | `REDIS_PORT`         | Redis port (defaults to `6379`)      |
+| `redis-password`   | `REDIS_PASSWORD`     | Redis AUTH password                  |
+
+#### Authentication
+| Secret Name          | Environment Variable | Description                                        |
+|-----------------------|----------------------|-----------------------------------------------------|
+| `jwt-signing-key`     | `JWT_SIGNING_KEY`    | JWT signing key (auto-generated if not provided)    |
+| `github-oauth-token`  | `GITHUB_OAUTH`       | GitHub OAuth token for API access                   |
 
 ## Setup Instructions
 
@@ -65,27 +72,22 @@ The following secrets must be populated for the platform to function:
 2. Edit `.env` and fill in your actual credentials:
    ```bash
    # GCP Configuration
-   PROJECT_ID=edupulse-483220
-   REGION=us-central1
+   GCP_PROJECT_ID=catuns-spring-boot
+   GCP_REGION=us-central1
 
    # PostgreSQL Database
    DATABASE_USER=your_db_user
    DATABASE_PASSWORD=your_db_password
    DATABASE_HOST=your-db-host.neon.tech
-   DATABASE_NAME=edupulse
+   DATABASE_NAME=lab_service
 
-   # Confluent Kafka
-   KAFKA_BOOTSTRAP_SERVERS=pkc-xxxxx.us-central1.gcp.confluent.cloud:9092
-   KAFKA_API_KEY=YOUR_KAFKA_API_KEY
-   KAFKA_API_SECRET=YOUR_KAFKA_API_SECRET
+   # Redis (Upstash)
+   REDIS_HOST=your-redis-host.upstash.io
+   REDIS_PORT=6379
+   REDIS_PASSWORD=your_redis_password
 
-   # Confluent Schema Registry
-   SCHEMA_REGISTRY_URL=https://psrc-xxxxx.us-central1.gcp.confluent.cloud
-   SCHEMA_REGISTRY_API_KEY=YOUR_SR_API_KEY
-   SCHEMA_REGISTRY_API_SECRET=YOUR_SR_API_SECRET
-
-   # AI Configuration (Optional)
-   GEMINI_API_KEY=your_gemini_api_key  # Optional
+   # GitHub OAuth
+   GITHUB_OAUTH=your_github_oauth_token
 
    # JWT Authentication
    JWT_SIGNING_KEY=  # Will be auto-generated if empty
@@ -100,7 +102,7 @@ The Terraform configuration will:
 2. Set up IAM permissions for service accounts to access secrets
 
 ```bash
-cd infra/envs/dev
+cd infra/gcp/envs/dev
 
 # Initialize Terraform (first time only)
 terraform init
@@ -118,29 +120,29 @@ After Terraform creates the secrets, populate them with values from your `.env` 
 
 ```bash
 # From the project root
-scripts/gcloud/set-secrets.sh edupulse-483220
+scripts/gcloud/set-secrets.sh catuns-spring-boot
 ```
 
 **Important:** This step must be done **after** `terraform apply` completes successfully.
 
 **Output Example:**
 ```
-[INFO] Starting secret provisioning for project: edupulse-483220
-[INFO] Reading from: /path/to/edupulse/.env
+[INFO] Starting secret provisioning for project: catuns-spring-boot
+[INFO] Reading from: /path/to/portfolio-lab/.env
 
-=== Kafka Configuration ===
-[INFO] Setting secret: kafka-bootstrap-servers
-[SUCCESS] Secret kafka-bootstrap-servers updated
-[INFO] Setting secret: kafka-api-key
-[SUCCESS] Secret kafka-api-key updated
+=== PostgreSQL Database Configuration ===
+[INFO] Setting secret: postgres-user
+[SUCCESS] Secret postgres-user updated
+[INFO] Setting secret: postgres-password
+[SUCCESS] Secret postgres-password updated
 ...
 
 =======================================================================
 [INFO] Secret provisioning complete!
 =======================================================================
 
-Total secrets processed: 12
-[SUCCESS] Successfully set: 12
+Total secrets processed: 9
+[SUCCESS] Successfully set: 9
 
 [SUCCESS] All secrets have been successfully provisioned in GCP Secret Manager
 [INFO] Secrets are now available for Cloud Run services
@@ -151,17 +153,17 @@ Total secrets processed: 12
 ### Verify Secrets in GCP Console
 
 1. Go to [GCP Console - Secret Manager](https://console.cloud.google.com/security/secret-manager)
-2. Select your project: `edupulse-483220`
+2. Select your project: `catuns-spring-boot`
 3. Verify all secrets are created and have at least one version
 
 ### Verify Secrets via gcloud CLI
 
 ```bash
 # List all secrets
-gcloud secrets list --project=edupulse-483220
+gcloud secrets list --project=catuns-spring-boot
 
 # View a specific secret (requires permissions)
-gcloud secrets versions access latest --secret=kafka-bootstrap-servers --project=edupulse-483220
+gcloud secrets versions access latest --secret=postgres-host --project=catuns-spring-boot
 ```
 
 ### Test Cloud Run Service Access
@@ -170,8 +172,8 @@ After deploying Cloud Run services, verify they can access secrets:
 
 ```bash
 # View service logs
-gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=quiz-service" \
-  --project=edupulse-483220 \
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=lab-service" \
+  --project=catuns-spring-boot \
   --limit=50 \
   --format="table(timestamp, textPayload)"
 ```
@@ -185,7 +187,7 @@ Look for any `SecretManager` permission errors in the logs.
 1. Modify values in `.env`
 2. Run the script again:
    ```bash
-   scripts/gcloud/set-secrets.sh edupulse-483220
+   scripts/gcloud/set-secrets.sh catuns-spring-boot
    ```
 
 ### Update via gcloud CLI
@@ -193,7 +195,7 @@ Look for any `SecretManager` permission errors in the logs.
 ```bash
 # Update a specific secret
 echo -n "new-secret-value" | gcloud secrets versions add SECRET_NAME \
-  --project=edupulse-483220 \
+  --project=catuns-spring-boot \
   --data-file=-
 ```
 
@@ -213,7 +215,7 @@ While Terraform can manage secret values, it's **not recommended** because:
 **Solution**:
 ```bash
 # Grant yourself Secret Manager Admin role (requires Owner/Admin permissions)
-gcloud projects add-iam-policy-binding edupulse-483220 \
+gcloud projects add-iam-policy-binding catuns-spring-boot \
   --member="user:your-email@example.com" \
   --role="roles/secretmanager.admin"
 ```
@@ -224,7 +226,7 @@ gcloud projects add-iam-policy-binding edupulse-483220 \
 
 **Solution**:
 ```bash
-cd infra/envs/dev
+cd infra/gcp/envs/dev
 terraform apply  # This creates the secrets
 ```
 
@@ -245,7 +247,7 @@ cp .env.example .env
 **Solution**: The IAM module in Terraform automatically grants access. Verify:
 ```bash
 # Check IAM bindings for a secret
-gcloud secrets get-iam-policy kafka-bootstrap-servers --project=edupulse-483220
+gcloud secrets get-iam-policy postgres-host --project=catuns-spring-boot
 ```
 
 You should see service accounts with `roles/secretmanager.secretAccessor`.
@@ -266,13 +268,11 @@ To rotate a secret:
 1. Update the value in `.env`
 2. Run the provisioning script:
    ```bash
-   scripts/gcloud/set-secrets.sh edupulse-483220
+   scripts/gcloud/set-secrets.sh catuns-spring-boot
    ```
 3. Cloud Run services will automatically use the latest version (no restart needed)
 
 ## Additional Resources
 
 - [GCP Secret Manager Documentation](https://cloud.google.com/secret-manager/docs)
-- [Confluent Cloud API Keys](https://docs.confluent.io/cloud/current/access-management/authenticate/api-keys/api-keys.html)
 - [Cloud Run Secrets](https://cloud.google.com/run/docs/configuring/secrets)
-- [Terraform Secret Manager Module](../../modules/secret_manager/README.md)

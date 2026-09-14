@@ -19,11 +19,7 @@ locals {
 # -----------------------------------------------------------------------------
 
 resource "google_project_service" "required_apis" {
-  for_each = toset(concat(
-    var.apis_to_enable,
-    var.enable_vertex_ai ? var.vertex_ai_apis : [],
-    [var.gemini_api]
-  ))
+  for_each = toset(var.apis_to_enable)
 
   project = var.project_id
   service = each.value
@@ -99,10 +95,6 @@ locals {
         secret_config.secret_name
       ]
 
-      # Enable Vertex AI for services that need it
-      enable_vertex_ai            = contains([], service_name) && var.enable_vertex_ai
-      enable_vertex_ai_prediction = contains([], service_name) && var.enable_vertex_ai
-
       # Enable Artifact Registry pull (optional, Cloud Run handles this automatically)
       enable_artifact_registry_pull = false
 
@@ -138,48 +130,6 @@ module "iam" {
 
 data "google_project" "project" {
   project_id = var.project_id
-}
-
-# -----------------------------------------------------------------------------
-# Vertex AI
-# Enable Vertex AI APIs and configure IAM for AI-powered features
-# -----------------------------------------------------------------------------
-
-module "vertex_ai" {
-  source = "../../modules/vertex_ai"
-  count  = var.enable_vertex_ai ? 1 : 0
-
-  project_id = var.project_id
-  region     = var.region
-
-  # Enable APIs via this module
-  enable_apis    = true
-  apis_to_enable = var.vertex_ai_apis
-
-  # Grant Vertex AI User role to service accounts that need it
-  # Only include service accounts that are actually deployed
-  # Use service account emails directly from IAM module (computed)
-  service_account_emails = [
-    for service_name in [] :
-    "${service_name}-sa@${var.project_id}.iam.gserviceaccount.com"
-    if contains(keys(var.services), service_name)
-  ]
-
-  # Enable default GCP-managed service agent for Vertex AI
-  # Disabled until we actually deploy Vertex AI models/endpoints
-  enable_default_service_agent = false
-
-  # Optional: Enable logging and monitoring for Vertex AI operations
-  enable_logging_permissions    = true
-  enable_monitoring_permissions = true
-
-  # Labels
-  labels = local.common_labels
-
-  depends_on = [
-    google_project_service.required_apis,
-    module.iam
-  ]
 }
 
 # -----------------------------------------------------------------------------
@@ -237,8 +187,6 @@ module "cloud_run_services" {
   liveness_probe_timeout           = 3
   liveness_probe_period            = 10
   liveness_probe_failure_threshold = 3
-
-  # session_affinity = each.key == "realtime-gateway"
 
   # IAM
   allow_unauthenticated = var.allow_unauthenticated
