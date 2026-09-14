@@ -81,10 +81,10 @@
         "orgName": "feature"
       },
       "declaration": {
-        "projectName": "base"
+        "projectName": "visitor"
       },
       "action": {
-        "projectName": "lab-client"
+        "projectName": "visitor"
       },
       "axios": {
         "appProjectName": "lab"

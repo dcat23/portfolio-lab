@@ -10,54 +10,27 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@feature/ui/*": [
-        "./features/ui/src/*"
-      ],
-      "@feature/ui": [
-        "./features/ui/src/index.ts"
-      ],
-      "@feature/ui/server": [
-        "./features/ui/src/server.ts"
-      ],
-      "@app/lab/*": [
-        "./apps/lab/*"
-      ],
-      "@app/app/*": [
-        "./apps/app/*"
-      ],
-      "@feature/base": [
-        "./features/base/src/index.ts"
-      ],
-      "@feature/base/server": [
-        "./features/base/src/server.ts"
-      ],
-      "@feature/base/*": [
-        "./features/base/src/*"
-      ],
-      "@feature/lab-client": [
-        "./features/lab-client/src/index.ts"
-      ],
-      "@feature/lab-client/server": [
-        "./features/lab-client/src/server.ts"
-      ],
-      "@feature/lab-client/*": [
-        "./features/lab-client/src/*"
-      ],
-      "@app/me/*": [
-        "apps/me/*"
-      ]
+      "@feature/ui/*": ["./features/ui/src/*"],
+      "@feature/ui": ["./features/ui/src/index.ts"],
+      "@feature/ui/server": ["./features/ui/src/server.ts"],
+      "@app/lab/*": ["./apps/lab/*"],
+      "@app/app/*": ["./apps/app/*"],
+      "@feature/base": ["./features/base/src/index.ts"],
+      "@feature/base/server": ["./features/base/src/server.ts"],
+      "@feature/base/*": ["./features/base/src/*"],
+      "@feature/lab-client": ["./features/lab-client/src/index.ts"],
+      "@feature/lab-client/server": ["./features/lab-client/src/server.ts"],
+      "@feature/lab-client/*": ["./features/lab-client/src/*"],
+      "@feature/visitor": ["features/visitor/src/index.ts"],
+      "@feature/visitor/server": ["features/visitor/src/server.ts"],
+      "@feature/visitor/*": ["features/visitor/src/*"],
+      "@app/me/*": ["apps/me/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
