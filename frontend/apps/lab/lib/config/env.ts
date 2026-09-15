@@ -9,6 +9,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_ROOT_DOMAIN: z.string().url(),
   NEXT_PUBLIC_LOGGING_BEACON_PATH: z.string(),
   LOGGING_SERVICE_NAME: z.string(),
+  DISCORD_WEBHOOK_ID: z.string(),
+  DISCORD_WEBHOOK_TOKEN: z.string(),
   /* schema end */
 });
 
@@ -26,4 +28,6 @@ export const BASE_URL =
 export const NEXT_PUBLIC_LOGGING_BEACON_PATH =
   process.env.NEXT_PUBLIC_LOGGING_BEACON_PATH;
 export const LOGGING_SERVICE_NAME = process.env.LOGGING_SERVICE_NAME;
+export const DISCORD_WEBHOOK_ID = process.env.DISCORD_WEBHOOK_ID;
+export const DISCORD_WEBHOOK_TOKEN = process.env.DISCORD_WEBHOOK_TOKEN;
 /* vars end */
