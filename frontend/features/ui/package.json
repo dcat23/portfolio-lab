@@ -5,13 +5,25 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "default": "./index.js"
     },
     "./server": {
-      "types": "./dist/server.d.ts",
-      "import": "./dist/server.js",
-      "default": "./dist/server.js"
-    }
+      "types": "./server.d.ts",
+      "import": "./server.js",
+      "default": "./server.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.3.0",
+    "lucide-react": "^0.454.0",
+    "radix-ui": "^1.6.7",
+    "shadcn": "^4.21.0",
+    "tw-animate-css": "1.3.3"
   }
 }

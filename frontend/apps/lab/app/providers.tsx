@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 // import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import ReactQueryProvider from "../lib/providers/react-query-provider";
-import { ThemeProvider } from "../components/theme-provider";
+import { ThemeProvider } from "../lib/providers/theme-provider";
 
 
 interface Props {

@@ -49,18 +49,18 @@ export function HeroSection() {
               <h1 className="text-4xl font-bold tracking-tight sm:text-4xl lg:text-5xl xl:text-6xl text-balance">
                 {PROJECT_NAME}
                 <br />
-                <span
-                  className="bg-gradient-to-l from-primary/50 to-accent text-transparent bg-clip-text typing-cursor"
-                >
+                <span className="bg-gradient-to-l from-primary/50 to-accent text-transparent bg-clip-text typing-cursor">
                   {displayText}
                 </span>
               </h1>
             </div>
 
             <p className="max-w-lg text-base sm:text-lg leading-relaxed text-muted-foreground animate-fade-in-up stagger-2">
-              Welcome to my digital workshop — a space for experiments, prototypes, and open-source artifacts. Currently
-              building at <span className="text-foreground font-medium">...</span>. Here, ideas are forged,
-              tested, and refined. Not a portfolio. A laboratory.
+              Welcome to my digital workshop — a space for experiments,
+              prototypes, and open-source artifacts. Currently building at{' '}
+              <span className="text-foreground font-medium">...</span>. Here,
+              ideas are forged, tested, and refined. Not a portfolio. A
+              laboratory.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up stagger-3">
@@ -69,7 +69,9 @@ export function HeroSection() {
                 className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-lg border border-primary bg-primary/10 px-7 py-4 sm:py-3.5 font-mono text-sm text-primary transition-all duration-500 hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
               >
                 <span className="relative z-10">explore artifacts</span>
-                <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">→</span>
+                <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
                 {/* Animated background */}
                 <span className="absolute inset-0 -translate-x-full bg-primary transition-transform duration-500 group-hover:translate-x-0" />
               </a>
@@ -98,28 +100,31 @@ export function HeroSection() {
                 terminal://dcat
               </div>
 
-              <pre className="mt-6 overflow-x-auto text-[10px] leading-relaxed text-primary/80 sm:text-xs md:text-sm" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+              <pre
+                className="mt-6 overflow-x-auto text-[10px] leading-relaxed text-primary/80 sm:text-xs md:text-sm"
+                style={{ fontFamily: "'Courier New', Courier, monospace" }}
+              >
                 <span className="sm:hidden">{`┌───────────────────────┐
-│  ██████╗███████╗      │
-│ ██╔════╝██╔════╝      │
-│ ██║     █████╗        │
-│ ██║     ██╔══╝        │
-│ ╚██████╗██║           │
-│  ╚═════╝╚═╝           │
+│  ██████╗  ██████╗     │
+│  ██╔══██╗██╔════╝     │
+│  ██║  ██║██║          │
+│  ██║  ██║██║          │
+│  ██████╔╝╚██████╗     │
+│  ╚═════╝  ╚═════╝     │
 │                       │
 │  > experiments: 12    │
 │  > status: forging    │
 └───────────────────────┘`}</span>
-                <span className="hidden sm:block">{`
+                <span className="hidden sm:block">
+                  {`
 ┌─────────────────────────────────────┐
 │                                     │
-│  ██████╗ ██████╗ ██████╗ ███████╗   │
-│ ██╔════╝██╔═══██╗██╔══██╗██╔════╝   │
-│ ██║     ██║   ██║██║  ██║█████╗     │
-│ ██║     ██║   ██║██║  ██║██╔══╝     │
-│ ╚██████╗╚██████╔╝██████╔╝███████╗   │
-│  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝   │
-│             DCAT                    │
+│  ██████╗  ██████╗ █████╗ ████████╗  │
+│  ██╔══██╗██╔════╝██╔══██╗╚══██╔══╝  │
+│  ██║  ██║██║     ███████║   ██║     │
+│  ██║  ██║██║     ██╔══██║   ██║     │
+│  ██████╔╝╚██████╗██║  ██║   ██║     │
+│  ╚═════╝  ╚═════╝╚═╝  ╚═╝   ╚═╝     │
 │                                     │
 │   > experiments loaded: 12          │
 │   > status: forging                 │
@@ -138,9 +143,9 @@ export function HeroSection() {
             </div>
             <div
               className="absolute -bottom-3 sm:-bottom-6 -left-2 sm:-left-6 rounded-lg border border-border bg-card glass px-3 sm:px-4 py-1.5 font-mono text-[11px] sm:text-xs text-muted-foreground animate-float"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             >
-              {moment(new Date()).format("MMM, YYYY")}
+              {moment(new Date()).format('MMM, YYYY')}
             </div>
 
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full bg-primary/5 blur-3xl" />
@@ -153,5 +158,5 @@ export function HeroSection() {
         <div className="w-px h-12 bg-gradient-to-b from-primary/50 to-transparent animate-pulse" />
       </div>
     </section>
-  )
+  );
 }

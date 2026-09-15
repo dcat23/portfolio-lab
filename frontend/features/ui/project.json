@@ -35,11 +35,17 @@
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
+    },
+    "shadcn": {
+      "executor": "next-feature:shadcn",
+      "options": {
+        "args": "init"
+      }
     }
   },
   "release": {
     "version": {
-      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
       "currentVersionResolver": "git-tag",
       "fallbackCurrentVersionResolver": "disk"
     }
