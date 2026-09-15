@@ -1,0 +1,62 @@
+/*
+ * Styles for `CursorGlow` (./cursor-glow.tsx).
+ *
+ * The component only ever writes its live pointer position and visibility
+ * state onto the elements (as CSS custom properties / data attributes) -
+ * every visual concern (size, blur, gradient, transitions) lives here so the
+ * component stays a plain state/event controller.
+ *
+ * Consumers must define `--glow-color` / `--glow-color-strong` (and have the
+ * shadcn `--primary` token available) in their own theme - this file only
+ * reads them, it doesn't set defaults, so each app can tint its own glow.
+ */
+
+.cursor-glow-halo,
+.cursor-glow-dot {
+  position: fixed;
+  left: var(--cursor-glow-x, 0);
+  top: var(--cursor-glow-y, 0);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cursor-glow-halo {
+  width: 400px;
+  height: 400px;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(10px);
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 65%);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s ease,
+    height 0.3s ease;
+}
+
+.cursor-glow-halo[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor-glow-halo[data-hover="true"] {
+  width: 500px;
+  height: 500px;
+}
+
+:root:not(.dark) .cursor-glow-halo {
+  background: radial-gradient(circle, var(--glow-color-strong) 0%, transparent 65%);
+}
+
+.cursor-glow-dot {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  filter: blur(4px);
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-glow-dot[data-visible="true"] {
+  opacity: 0.15;
+}

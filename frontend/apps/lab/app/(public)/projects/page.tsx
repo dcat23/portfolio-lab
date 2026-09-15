@@ -39,11 +39,7 @@ export default async function ProjectsPage() {
   const response = await getProjects();
 
   if (!response.success) {
-    if (response.error) {
-      log.warn(response.error.body);
-    } else {
-      log.warn(response.message);
-    }
+    log.warn(response.error?.body, response.message);
   }
   return (
     <div className="pt-24">

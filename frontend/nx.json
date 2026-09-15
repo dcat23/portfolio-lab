@@ -1,10 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
@@ -29,21 +26,12 @@
     },
     "@nx/vite:build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     },
     "@nx/jest:jest": {
       "cache": true,
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js"
-      ],
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
       "options": {
         "passWithNoTests": true
       },
@@ -56,13 +44,8 @@
     },
     "@nx/next:build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "release": {
@@ -81,19 +64,18 @@
         "orgName": "feature"
       },
       "declaration": {
-        "projectName": "visitor"
+        "projectName": "lab-client"
       },
       "action": {
-        "projectName": "visitor"
-      },
-      "axios": {
-        "appProjectName": "lab"
+        "projectName": "lab-client"
       },
       "store": {},
       "dotenv": {
-        "projects": [
-          "me"
-        ]
+        "projects": [""]
+      },
+      "component": {
+        "projectName": "atro-ui",
+        "type": "ui"
       }
     },
     "@nx/next": {

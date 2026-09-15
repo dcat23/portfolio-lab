@@ -5,7 +5,10 @@ import { ReactNode } from 'react';
 import './global.css';
 import Providers from './providers';
 import { Layout } from '../components/layout';
+import { Inter } from "next/font/google";
+import { cn } from "@app/me/lib/ui/utils";
 
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   metadataBase: new URL(NEXT_PUBLIC_ROOT_DOMAIN),
@@ -52,7 +55,7 @@ export default function RootLayout({
   children: ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
       <body>
         <Providers>
           <Layout>
