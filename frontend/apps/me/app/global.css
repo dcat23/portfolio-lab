@@ -2,6 +2,16 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/*
+ * Tailwind v4's automatic content detection doesn't reach into workspace
+ * libraries the way `tailwind.config.js`'s `content` array used to (that
+ * array is now dead for anything not wired up via `@config`). Without this,
+ * classes that only ever appear inside a `@feature/*` component - e.g.
+ * `cursor-glow.tsx`'s `lg:block` - never get generated, so they silently
+ * behave as if the class doesn't exist.
+ */
+@source "../../../features";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -80,10 +90,6 @@
     --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
     --sidebar-border: oklch(0.923 0.003 48.717);
     --sidebar-ring: oklch(0.709 0.01 56.259);
-
-    /* Custom animation tokens */
-    --glow-color: oklch(0.5 0.22 170 / 0.15);
-    --glow-color-strong: oklch(0.5 0.22 170 / 0.25);
 }
 
 .dark {
@@ -119,8 +125,14 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.553 0.013 58.071);
 
-    --glow-color: oklch(0.72 0.2 170 / 0.12);
-    --glow-color-strong: oklch(0.72 0.2 170 / 0.22);
+    /*
+     * No --glow-color / --glow-color-strong here anymore - CursorGlow
+     * (@feature/ui/components/cursor-glow) defaults to a translucent
+     * `--primary` (this app's amber/orange accent, above) rather than a
+     * hardcoded hue, so it already matches this theme with zero setup. Set
+     * them here again only to make the glow a color *other* than this app's
+     * primary accent.
+     */
 }
 
 @layer base {
