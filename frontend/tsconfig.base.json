@@ -10,27 +10,99 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@feature/ui/*": ["./features/ui/src/*"],
-      "@feature/ui": ["./features/ui/src/index.ts"],
-      "@feature/ui/server": ["./features/ui/src/server.ts"],
-      "@app/lab/*": ["./apps/lab/*"],
-      "@app/app/*": ["./apps/app/*"],
-      "@feature/base": ["./features/base/src/index.ts"],
-      "@feature/base/server": ["./features/base/src/server.ts"],
-      "@feature/base/*": ["./features/base/src/*"],
-      "@feature/lab-client": ["./features/lab-client/src/index.ts"],
-      "@feature/lab-client/server": ["./features/lab-client/src/server.ts"],
-      "@feature/lab-client/*": ["./features/lab-client/src/*"],
-      "@feature/visitor": ["features/visitor/src/index.ts"],
-      "@feature/visitor/server": ["features/visitor/src/server.ts"],
-      "@feature/visitor/*": ["features/visitor/src/*"],
-      "@app/me/*": ["apps/me/*"]
+      "@app/lab/*": [
+        "apps/lab/*"
+      ],
+      "@app/app/*": [
+        "./apps/app/*"
+      ],
+      "@feature/base": [
+        "./features/base/src/index.ts"
+      ],
+      "@feature/base/server": [
+        "./features/base/src/server.ts"
+      ],
+      "@feature/base/*": [
+        "./features/base/src/*"
+      ],
+      "@feature/lab-client": [
+        "./features/lab-client/src/index.ts"
+      ],
+      "@feature/lab-client/server": [
+        "./features/lab-client/src/server.ts"
+      ],
+      "@feature/lab-client/*": [
+        "./features/lab-client/src/*"
+      ],
+      "@feature/visitor": [
+        "features/visitor/src/index.ts"
+      ],
+      "@feature/visitor/server": [
+        "features/visitor/src/server.ts"
+      ],
+      "@feature/visitor/*": [
+        "features/visitor/src/*"
+      ],
+      "@app/me/*": [
+        "apps/me/*"
+      ],
+      "@feature/cult-ui": [
+        "features/shadcn/cult-ui/src/index.ts"
+      ],
+      "@feature/cult-ui/server": [
+        "features/shadcn/cult-ui/src/server.ts"
+      ],
+      "@feature/cult-ui/*": [
+        "features/shadcn/cult-ui/src/*"
+      ],
+      "@feature/atro-ui": [
+        "features/shadcn/atro-ui/src/index.ts"
+      ],
+      "@feature/atro-ui/server": [
+        "features/shadcn/atro-ui/src/server.ts"
+      ],
+      "@feature/atro-ui/*": [
+        "features/shadcn/atro-ui/src/*"
+      ],
+      "@feature/joly-ui": [
+        "features/shadcn/joly-ui/src/index.ts"
+      ],
+      "@feature/joly-ui/server": [
+        "features/shadcn/joly-ui/src/server.ts"
+      ],
+      "@feature/joly-ui/*": [
+        "features/shadcn/joly-ui/src/*"
+      ],
+      "@feature/ui": [
+        "features/ui/src/index.ts"
+      ],
+      "@feature/ui/server": [
+        "features/ui/src/server.ts"
+      ],
+      "@feature/ui/*": [
+        "features/ui/src/*"
+      ],
+      "@feature/auth": [
+        "features/auth/src/index.ts"
+      ],
+      "@feature/auth/server": [
+        "features/auth/src/server.ts"
+      ],
+      "@feature/auth/*": [
+        "features/auth/src/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

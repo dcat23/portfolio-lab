@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-// import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import ReactQueryProvider from "../lib/providers/react-query-provider";
 import { ThemeProvider } from "../lib/providers/theme-provider";
@@ -11,14 +11,20 @@ interface Props {
 
 const Providers = ({ children }: Props) => {
   return (
-    // <SessionProvider>
-      <ReactQueryProvider>
-        <ThemeProvider  attribute="class" defaultTheme="dark" enableSystem={true} storageKey="theme-mode">
+    <SessionProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        storageKey="theme-mode"
+        disableTransitionOnChange
+      >
+        <ReactQueryProvider>
           <Toaster position="bottom-right" />
           {children}
-        </ThemeProvider>
-      </ReactQueryProvider>
-    // </SessionProvider>
+        </ReactQueryProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 };
 

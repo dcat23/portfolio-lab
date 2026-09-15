@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@next-feature/logging/server';
-import { NEXT_PUBLIC_LOGGING_BEACON_PATH } from '../../../lib/config/env';
+import { NEXT_PUBLIC_LOGGING_BEACON_PATH } from "@app/lab/lib/config/env";
 
 interface ClientLogPayload {
   level: string;
