@@ -1,16 +1,48 @@
 "use client"
 
 import { PROJECT_NAME, PROJECT_TITLE } from "@feature/base/server"
+import {
+  TerminalBlock,
+  type TerminalLine,
+} from "@feature/ui/components/ui/common/terminal-block"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import moment from "moment";
 
 const roles = ["building interfaces", "exploring systems", "breaking barriers", "forging ideas", "crafting code"]
 
+const compactBanner: TerminalLine[] = [
+  { text: "" },
+  { text: "██████╗  ██████╗ ", color: "text-primary/80" },
+  { text: "██╔══██╗██╔════╝ ", color: "text-primary/80" },
+  { text: "██║  ██║██║      ", color: "text-primary/80" },
+  { text: "██║  ██║██║      ", color: "text-primary/80" },
+  { text: "██████╔╝╚██████╗ ", color: "text-primary/80" },
+  { text: "╚═════╝  ╚═════╝ ", color: "text-primary/80" },
+  { text: "" },
+  { text: "> experiments: 12" },
+  { text: "> status: forging", color: "text-green-500" },
+]
+
+const fullBanner: TerminalLine[] = [
+  { text: "" },
+  { text: "██████╗  ██████╗ █████╗ ████████╗", color: "text-primary/80" },
+  { text: "██╔══██╗██╔════╝██╔══██╗╚══██╔══╝", color: "text-primary/80" },
+  { text: "██║  ██║██║     ███████║   ██║   ", color: "text-primary/80" },
+  { text: "██║  ██║██║     ██╔══██║   ██║   ", color: "text-primary/80" },
+  { text: "██████╔╝╚██████╗██║  ██║   ██║   ", color: "text-primary/80" },
+  { text: "╚═════╝  ╚═════╝╚═╝  ╚═╝   ╚═╝   ", color: "text-primary/80" },
+  { text: "" },
+  { text: "> experiments loaded: 12" },
+  { text: "> status: forging", color: "text-green-500" },
+]
+
 export function HeroSection() {
   const [currentRole, setCurrentRole] = useState(0)
   const [displayText, setDisplayText] = useState("")
   const [isDeleting, setIsDeleting] = useState(false)
+
+  const lastSpark = moment(new Date()).fromNow()
 
   useEffect(() => {
     const targetText = roles[currentRole]
@@ -89,51 +121,35 @@ export function HeroSection() {
 
           {/* Right column - ASCII Art / Visual */}
           <div className="relative animate-scale-in stagger-4">
-            <div className="relative rounded-xl border border-border bg-card/60 glass p-5 sm:p-8 hover-lift">
-              {/* Terminal header dots */}
-              <div className="absolute top-4 left-4 flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-destructive/60 transition-colors hover:bg-destructive" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500/60 transition-colors hover:bg-yellow-500" />
-                <div className="h-3 w-3 rounded-full bg-primary/60 transition-colors hover:bg-primary" />
-              </div>
-              <div className="absolute top-3.5 left-1/2 -translate-x-1/2 bg-background/50 rounded-md px-3 py-1 font-mono text-xs text-muted-foreground">
-                terminal://dcat
-              </div>
-
-              <pre
-                className="mt-6 overflow-x-auto text-[10px] leading-relaxed text-primary/80 sm:text-xs md:text-sm"
-                style={{ fontFamily: "'Courier New', Courier, monospace" }}
-              >
-                <span className="sm:hidden">{`┌───────────────────────┐
-│  ██████╗  ██████╗     │
-│  ██╔══██╗██╔════╝     │
-│  ██║  ██║██║          │
-│  ██║  ██║██║          │
-│  ██████╔╝╚██████╗     │
-│  ╚═════╝  ╚═════╝     │
-│                       │
-│  > experiments: 12    │
-│  > status: forging    │
-└───────────────────────┘`}</span>
-                <span className="hidden sm:block">
-                  {`
-┌─────────────────────────────────────┐
-│                                     │
-│  ██████╗  ██████╗ █████╗ ████████╗  │
-│  ██╔══██╗██╔════╝██╔══██╗╚══██╔══╝  │
-│  ██║  ██║██║     ███████║   ██║     │
-│  ██║  ██║██║     ██╔══██║   ██║     │
-│  ██████╔╝╚██████╗██║  ██║   ██║     │
-│  ╚═════╝  ╚═════╝╚═╝  ╚═╝   ╚═╝     │
-│                                     │
-│   > experiments loaded: 12          │
-│   > status: forging                 │
-│   > last spark: ${moment(new Date()).fromNow().padEnd(20)}│
-│                                     │
-└─────────────────────────────────────┘`}
-                </span>
-              </pre>
-            </div>
+            <TerminalBlock
+              title="terminal://dcat"
+              variant="glass"
+              copyable
+              expandable
+              className="sm:hidden hover-lift"
+              commands={[
+                {
+                  command: "cat banner.txt",
+                  output: compactBanner,
+                },
+              ]}
+            />
+            <TerminalBlock
+              title="terminal://dcat"
+              variant="glass"
+              copyable
+              expandable
+              className="hidden sm:block hover-lift"
+              commands={[
+                {
+                  command: "cat banner.txt",
+                  output: [
+                    ...fullBanner,
+                    { text: `> last spark: ${lastSpark}` },
+                  ],
+                },
+              ]}
+            />
 
             <div className="absolute -right-2 sm:-right-6 -top-2 sm:-top-6 rounded-lg border border-primary/40 bg-primary/15 glass px-3 sm:px-4 py-1.5 font-mono text-[11px] sm:text-xs text-primary animate-float">
               <span className="flex items-center gap-2">
@@ -141,12 +157,12 @@ export function HeroSection() {
                 v0.1.0
               </span>
             </div>
-            <div
-              className="absolute -bottom-3 sm:-bottom-6 -left-2 sm:-left-6 rounded-lg border border-border bg-card glass px-3 sm:px-4 py-1.5 font-mono text-[11px] sm:text-xs text-muted-foreground animate-float"
-              style={{ animationDelay: '1s' }}
-            >
-              {moment(new Date()).format('MMM, YYYY')}
-            </div>
+            {/*<div*/}
+            {/*  className="absolute -bottom-3 sm:-bottom-6 -left-2 sm:-left-6 rounded-lg border border-border bg-card glass px-3 sm:px-4 py-1.5 font-mono text-[11px] sm:text-xs text-muted-foreground animate-float"*/}
+            {/*  style={{ animationDelay: '1s' }}*/}
+            {/*>*/}
+            {/*  {moment(new Date()).format('MMM, YYYY')}*/}
+            {/*</div>*/}
 
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full bg-primary/5 blur-3xl" />
           </div>
