@@ -1,7 +1,7 @@
 "use client"
 
 import type { BlogPost } from "@feature/lab-client/server"
-import { Avatar, AvatarFallback, AvatarImage } from "@feature/ui/components/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@feature/ui/components/ui/common/avatar"
 import { cn } from "@feature/ui/lib/utils"
 import { ArrowRight, Calendar, Clock } from "lucide-react"
 import moment from "moment"

@@ -46,6 +46,10 @@
       "options": {
         "jestConfig": "apps/lab/jest.config.cts"
       }
+    },
+    "shadcn": {
+      "executor": "next-feature:shadcn",
+      "options": {}
     }
   }
 }

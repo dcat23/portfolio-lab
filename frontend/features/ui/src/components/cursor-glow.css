@@ -1,0 +1,92 @@
+/*
+ * Styles for `CursorGlow` (./cursor-glow.tsx).
+ *
+ * The component only ever writes its live pointer position and visibility
+ * state onto the elements (as CSS custom properties / data attributes) -
+ * every visual concern (size, blur, gradient, transitions) lives here so the
+ * component stays a plain state/event controller.
+ *
+ * Overridable custom properties (all optional - documented defaults below
+ * apply whenever a consumer doesn't set them):
+ *
+ *   --glow-color         halo fill, dark-mode / default. Default: var(--primary) at 14% (via color-mix)
+ *   --glow-color-strong  halo fill, light mode. Default: var(--primary) at 26% (via color-mix)
+ *   --cursor-glow-size        halo diameter, at rest. Default: 70vmax
+ *   --cursor-glow-size-hover  halo diameter, hovering an interactive element. Default: 85vmax
+ *
+ * The color defaults deliberately derive from shadcn's `--primary` token
+ * (the same one the accent dot below uses) rather than a color of their
+ * own - any shadcn theme already defines it, so the glow matches the
+ * consuming app's accent color out of the box with zero setup, and stays in
+ * sync if that token changes. Set `--glow-color`/`--glow-color-strong`
+ * directly only when the glow should be a *different* hue than the theme's
+ * primary - e.g. always `--destructive` regardless of theme.
+ *
+ * `--cursor-glow-size(-hover)` use `vmax` (not px) so the halo reads as "a
+ * large soft wash of the viewport", matching the legacy app's full-bleed
+ * pointer-tracked radial gradient, rather than a small fixed-size spotlight.
+ * `CursorGlow`'s `radius`/`hoverRadius` props set these per-instance; set
+ * the custom properties directly to change the default for every usage.
+ *
+ * To retint or resize, set these on `:root` (or `.dark`/`:root:not(.dark)`
+ * for mode-specific values) in the consuming app's theme - see
+ * apps/me/app/global.css for an example override.
+ */
+
+.cursor-glow-halo,
+.cursor-glow-dot {
+  position: fixed;
+  left: var(--cursor-glow-x, 0);
+  top: var(--cursor-glow-y, 0);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cursor-glow-halo {
+  width: var(--cursor-glow-size, 70vmax);
+  height: var(--cursor-glow-size, 70vmax);
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(40px);
+  background: radial-gradient(
+    circle,
+    var(--glow-color, color-mix(in oklch, var(--primary) 14%, transparent)) 0%,
+    transparent 65%
+  );
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s ease,
+    height 0.3s ease;
+}
+
+.cursor-glow-halo[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor-glow-halo[data-hover="true"] {
+  width: var(--cursor-glow-size-hover, 85vmax);
+  height: var(--cursor-glow-size-hover, 85vmax);
+}
+
+:root:not(.dark) .cursor-glow-halo {
+  background: radial-gradient(
+    circle,
+    var(--glow-color-strong, color-mix(in oklch, var(--primary) 26%, transparent)) 0%,
+    transparent 65%
+  );
+}
+
+.cursor-glow-dot {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  filter: blur(4px);
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-glow-dot[data-visible="true"] {
+  opacity: 0.15;
+}

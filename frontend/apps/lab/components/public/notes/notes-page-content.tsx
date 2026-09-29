@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { cn } from "@feature/ui/lib/utils"
 import { ArrowRight, Calendar, Tag, Search } from "lucide-react"
-import { Input } from "@feature/ui/components/input"
+import { Input } from "@feature/ui/components/ui/common/input"
 
 const notes = [
   {

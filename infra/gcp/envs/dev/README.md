@@ -1,13 +1,13 @@
-#Dev Environment
+# Dev Environment
 
-This directory contains Terraform configuration for the EduPulse development environment on Google Cloud Platform.
+This directory contains Terraform configuration for the portfolio-lab development environment on Google Cloud Platform.
 
 ## Quick Start
 
 ### Prerequisites
 
-1. **GCP Project**: 
-2. **Terraform**: v1.0+ ([Install](https://developer.hashicorp.com/terraform/downloads))
+1. **GCP Project**: `catuns-spring-boot` (see `terraform.tfvars`)
+2. **Terraform**: v1.0+ ([Install](https://developer.hashicorp.com/terraform/downloads), or run `scripts/terraform/install/linux.sh` on Linux)
 3. **gcloud CLI**: Authenticated and configured ([Install](https://cloud.google.com/sdk/docs/install))
 4. **Environment File**: `.env` file in project root with secrets
 
@@ -16,7 +16,7 @@ This directory contains Terraform configuration for the EduPulse development env
 ```bash
 # 1. Authenticate with GCP
 gcloud auth login
-gcloud config set project edupulse-483220
+gcloud config set project catuns-spring-boot
 
 # 2. Configure application default credentials (for Terraform)
 gcloud auth application-default login
@@ -27,7 +27,7 @@ cp .env.example .env
 # Edit .env with your actual credentials
 
 # 4. Return to dev environment directory
-cd infra/envs/dev
+cd infra/gcp/envs/dev
 
 # 5. Initialize Terraform
 terraform init
@@ -43,11 +43,11 @@ terraform apply tfplan
 
 The Terraform configuration creates:
 
-1. **Artifact Registry**: Container image repository (`us-central1-docker.pkg.dev/edupulse-483220/edupulse`)
-2. **Secret Manager**: All application secrets (Kafka, database, API keys)
+1. **Artifact Registry**: Container image repository (`us-central1-docker.pkg.dev/catuns-spring-boot/portfolio`)
+2. **Secret Manager**: All application secrets (database, cache, JWT, GitHub OAuth)
 3. **IAM Service Accounts**: One per microservice with appropriate permissions
-4. **Cloud Run Services**: Deployed microservices (currently: quiz-service)
-5. **Vertex AI Configuration**: APIs and IAM for AI-powered features
+4. **Cloud Run Services**: Deployed microservices (currently: lab-service)
+5. **VPC Connector** *(optional, disabled by default)*: For private VPC resource access
 
 ### Secrets Configuration
 
@@ -58,7 +58,7 @@ After deploying infrastructure with Terraform, secrets must be populated manuall
 To populate or update secrets:
 ```bash
 # From project root
-scripts/gcloud/set-secrets.sh edupulse-483220
+scripts/gcloud/set-secrets.sh catuns-spring-boot
 ```
 
 ## Configuration Files
@@ -108,7 +108,7 @@ services = {
 terraform state list
 
 # Show Cloud Run service URLs
-terraform output service_urls
+terraform output cloud_run_service_urls
 
 # Show service account emails
 terraform output service_account_emails
@@ -121,7 +121,7 @@ terraform output service_account_emails
 vim .env
 
 # Re-run secrets script (from project root)
-scripts/gcloud/set-secrets.sh edupulse-483220
+scripts/gcloud/set-secrets.sh catuns-spring-boot
 ```
 
 ### Destroy Environment
@@ -140,8 +140,8 @@ terraform destroy
 
 ```bash
 # Cloud Run service logs
-gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=quiz-service" \
-  --project=edupulse-483220 \
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=lab-service" \
+  --project=catuns-spring-boot \
   --limit=50
 
 # Terraform state changes
@@ -155,8 +155,8 @@ This configuration uses custom modules from `../../modules/`:
 - **artifact_registry**: Container image repository
 - **secret_manager**: GCP Secret Manager secrets
 - **iam**: Service accounts and IAM bindings
-- **vertex_ai**: Vertex AI APIs and permissions
 - **cloud_run_service**: Cloud Run service deployment
+- **networking**: VPC Serverless Connector (optional, disabled by default — not needed with public external services like Upstash and Neon)
 
 ## Environment Variables
 
@@ -170,7 +170,6 @@ The configuration expects these variables in `terraform.tfvars`:
 - `secrets`: List of secrets to create
 
 ### Optional
-- `enable_vertex_ai`: Enable Vertex AI (default: true)
 - `enable_vpc_connector`: Enable VPC connector (default: false)
 - `allow_unauthenticated`: Allow public access (default: true for dev)
 
@@ -180,17 +179,17 @@ After `terraform apply`, useful outputs are displayed:
 
 ```hcl
 # Cloud Run service URLs
-service_urls = {
-  quiz-service = "https://quiz-service-xxxxx-uc.a.run.app"
+cloud_run_service_urls = {
+  lab-service = "https://lab-service-xxxxx-uc.a.run.app"
 }
 
 # Service account emails
 service_account_emails = {
-  quiz-service = "quiz-service-sa@edupulse-483220.iam.gserviceaccount.com"
+  lab-service = "lab-service-sa@catuns-spring-boot.iam.gserviceaccount.com"
 }
 
 # Artifact Registry repository
-artifact_registry_repository = "us-central1-docker.pkg.dev/edupulse-483220/edupulse"
+artifact_registry_full_path = "us-central1-docker.pkg.dev/catuns-spring-boot/portfolio"
 ```
 
 ## Troubleshooting
@@ -210,14 +209,14 @@ terraform apply -target=module.secret_manager
 
 Then run the secrets script:
 ```bash
-scripts/gcloud/set-secrets.sh edupulse-483220
+scripts/gcloud/set-secrets.sh catuns-spring-boot
 ```
 
 ### Error: "Permission denied"
 
 Check your IAM permissions:
 ```bash
-gcloud projects get-iam-policy edupulse-483220 --flatten="bindings[].members" \
+gcloud projects get-iam-policy catuns-spring-boot --flatten="bindings[].members" \
   --filter="bindings.members:user:$(gcloud config get-value account)"
 ```
 
@@ -229,8 +228,8 @@ You need these roles:
 
 Check container image exists in Artifact Registry:
 ```bash
-gcloud artifacts docker images list us-central1-docker.pkg.dev/edupulse-483220/edupulse \
-  --project=edupulse-483220
+gcloud artifacts docker images list us-central1-docker.pkg.dev/catuns-spring-boot/portfolio \
+  --project=catuns-spring-boot
 ```
 
 ## Remote State
@@ -250,7 +249,7 @@ Example GitHub Actions workflow:
 ```yaml
 - name: Terraform Apply
   run: |
-    cd infra/envs/dev
+    cd infra/gcp/envs/dev
     terraform init
     terraform apply -auto-approve
   env:
@@ -262,5 +261,3 @@ Example GitHub Actions workflow:
 - [Terraform GCP Provider Docs](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
 - [Cloud Run Documentation](https://cloud.google.com/run/docs)
 - [GCP Secret Manager](https://cloud.google.com/secret-manager/docs)
-- [Project README](../../README.md)
-- [Backend Service Documentation](../../backend/README.md)

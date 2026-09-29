@@ -25,11 +25,11 @@
 #   --dry-run                   Show commands without executing
 #
 # Examples:
-#   ./deploy-service.sh engagement-service
-#   ./deploy-service.sh quiz-service --region us-east1
-#   ./deploy-service.sh engagement-service --tag 0.0.2-SNAPSHOT
-#   ./deploy-service.sh quiz-service --init
-#   ./deploy-service.sh quiz-service --init --allow-unauthenticated --port 8080
+#   ./deploy-service.sh lab-service
+#   ./deploy-service.sh lab-service --region us-east1
+#   ./deploy-service.sh lab-service --tag 0.0.2-SNAPSHOT
+#   ./deploy-service.sh lab-service --init
+#   ./deploy-service.sh lab-service --init --allow-unauthenticated --port 8080
 # -----------------------------------------------------------------------------
 
 set -e

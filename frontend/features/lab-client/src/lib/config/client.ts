@@ -1,5 +1,9 @@
 import { ApiClient, ApiError, type ApiResponse } from '@next-feature/client';
 import { BACKEND_API_URL } from './env';
+import { logger } from '@next-feature/logging/server';
+
+const log = logger.child({ module: 'lab-client' });
+
 /**
  * Centralized API client configuration
  *
@@ -14,26 +18,13 @@ const apiClient = new ApiClient({
   baseURL: BACKEND_API_URL,
   enableRefreshToken: false,
   onUnauthorized: async () => {
-    console.log('[lab-client] Unauthorized');
-  },
-  onRefreshTokenExpired: async () => {
-    console.log('[lab-client] Refresh token expired');
+    log.info('Unauthorized');
   },
   onAuthenticated: async (config) => {
-    console.log(
-      '[lab-client]',
-      config.method.toUpperCase(),
-      config.url,
-      config.data ?? '',
-    );
+    log.info(config.data, `${config.method.toUpperCase()} ${config.url}`);
   },
-  onRefreshToken: async () => {
-    return '';
-  },
-  // timeout: 30000,
+
   maxRetries: 1,
-  // retryDelay: 1000
-  // baseUrl: process.env.BACKEND_API_URL
 });
 
 /**

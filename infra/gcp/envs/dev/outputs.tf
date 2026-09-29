@@ -127,35 +127,6 @@ output "docker_build_commands" {
 }
 
 # -----------------------------------------------------------------------------
-# Vertex AI Outputs
-# -----------------------------------------------------------------------------
-
-output "vertex_ai_enabled" {
-  description = "Whether Vertex AI is enabled for this environment"
-  value       = var.enable_vertex_ai
-}
-
-output "vertex_ai_service_accounts" {
-  description = "Service accounts with Vertex AI access"
-  value       = var.enable_vertex_ai ? module.vertex_ai[0].service_accounts_with_access : []
-}
-
-output "vertex_ai_endpoint_format" {
-  description = "Format for Vertex AI endpoint URLs"
-  value       = var.enable_vertex_ai ? module.vertex_ai[0].vertex_ai_endpoint_format : null
-}
-
-output "vertex_ai_iam_roles" {
-  description = "Summary of IAM roles granted for Vertex AI"
-  value       = var.enable_vertex_ai ? module.vertex_ai[0].iam_roles_granted : {}
-}
-
-output "vertex_ai_enabled_apis" {
-  description = "List of Vertex AI APIs that were enabled"
-  value       = var.enable_vertex_ai ? module.vertex_ai[0].enabled_apis : []
-}
-
-# -----------------------------------------------------------------------------
 # VPC Connector Outputs
 # -----------------------------------------------------------------------------
 
@@ -189,14 +160,12 @@ output "next_steps" {
   1. Authenticate Docker with Artifact Registry:
      gcloud auth configure-docker ${module.artifact_registry.docker_hostname}
 
-  2. Set secret values:
-  
-     # Gemini API key
+  2. Set secret values (or run scripts/gcloud/set-secrets.sh <project-id> from a populated .env):
 
-     # PostgreSQL credentials (for quiz service)
-     echo -n "edupulse" | gcloud secrets versions add postgres-user --data-file=-
-     echo -n "YOUR_POSTGRES_PASSWORD" | gcloud secrets versions add postgres-password --data-file=-
-     echo -n "lab-service" | gcloud secrets versions add postgres-database --data-file=-
+     # PostgreSQL credentials
+     echo -n "YOUR_DB_USER" | gcloud secrets versions add postgres-user --data-file=-
+     echo -n "YOUR_DB_PASSWORD" | gcloud secrets versions add postgres-password --data-file=-
+     echo -n "lab_service" | gcloud secrets versions add postgres-database --data-file=-
 
      # JWT signing key
      echo -n "$(openssl rand -base64 32)" | gcloud secrets versions add jwt-signing-key --data-file=-
@@ -207,13 +176,12 @@ output "next_steps" {
      echo -n "YOUR_REDIS_PASSWORD" | gcloud secrets versions add redis-password --data-file=-
 
   3. Build and push container images:
-     # Example for quiz-service
-     cd ../../../backend/quiz-service
-     docker build -t ${module.artifact_registry.repository_full_path}/quiz-service:latest .
-     docker push ${module.artifact_registry.repository_full_path}/quiz-service:latest
+     cd backend/lab-service
+     docker build -t ${module.artifact_registry.repository_full_path}/lab-service:latest .
+     docker push ${module.artifact_registry.repository_full_path}/lab-service:latest
 
-     # Or use the deploy script (once created):
-     # ../../../scripts/deploy_with_terraform.sh
+     # Or use the Makefile from the project root:
+     # make docker-push-lab-service
 
   4. Deploy Cloud Run services:
      terraform apply
@@ -224,8 +192,6 @@ output "next_steps" {
   6. Access your services:
      ${join("\n     ", [for name, url in module.cloud_run_services : "${name}: ${url.service_url}"])}
 
-
-  ${var.enable_vertex_ai ? "8. Configure Vertex AI for bandit-engine (if using AI features):\n     # Deploy a model endpoint or use pre-trained model\n     gcloud ai endpoints list --project=${var.project_id} --region=${var.region}\n     \n     # Update bandit-engine environment variable with endpoint ID:\n     VERTEX_AI_ENDPOINT_ID=your-endpoint-id\n" : ""}
   ====================================================================
   EOT
 }

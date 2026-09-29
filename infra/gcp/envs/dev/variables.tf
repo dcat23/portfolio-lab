@@ -88,22 +88,6 @@ variable "secrets" {
 }
 
 # -----------------------------------------------------------------------------
-# Vertex AI Configuration
-# -----------------------------------------------------------------------------
-
-variable "enable_vertex_ai" {
-  description = "Enable Vertex AI APIs and IAM bindings for AI-powered features"
-  type        = bool
-  default     = true
-}
-
-variable "vertex_ai_endpoint_id" {
-  description = "Vertex AI endpoint ID for bandit model (if pre-deployed)"
-  type        = string
-  default     = ""
-}
-
-# -----------------------------------------------------------------------------
 # Networking Configuration
 # -----------------------------------------------------------------------------
 
@@ -122,7 +106,7 @@ variable "enable_vpc_connector" {
 variable "vpc_connector_name" {
   description = "Name of the VPC Serverless Connector"
   type        = string
-  default     = "edupulse-connector"
+  default     = "portfolio-connector"
 }
 
 variable "vpc_connector_cidr" {
@@ -178,17 +162,3 @@ variable "apis_to_enable" {
   ]
 }
 
-variable "vertex_ai_apis" {
-  description = "Vertex AI APIs to enable (only if enable_vertex_ai is true)"
-  type        = list(string)
-  default = [
-    "aiplatform.googleapis.com",
-    "notebooks.googleapis.com",
-  ]
-}
-
-variable "gemini_api" {
-  description = "Gemini API to enable"
-  type        = string
-  default     = "generativelanguage.googleapis.com"
-}

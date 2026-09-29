@@ -21,7 +21,7 @@ variable "repository_id" {
 variable "description" {
   description = "Description of the Artifact Registry repository"
   type        = string
-  default     = "Container images for EduPulse microservices"
+  default     = "Container images for portfolio microservices"
 }
 
 variable "labels" {

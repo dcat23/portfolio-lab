@@ -1,0 +1,60 @@
+services:
+  lab-service:
+    image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_REPOSITORY}/lab-service:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      GITHUB_OAUTH: ${GITHUB_OAUTH}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine3.19
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-default}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+      POSTGRES_DB: ${DATABASE_NAME:-lab_service}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./infra/postgres:/docker-entrypoint-initdb.d
+    ports:
+      - '${DATABASE_PORT:-5432}:5432'
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    networks:
+      - redis
+
+  ngrok:
+    image: ngrok/ngrok
+    restart: unless-stopped
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command:
+      - "http"
+      - "host.docker.internal:4200"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "4040:4040"
+
+networks:
+  postgres:
+    driver: bridge
+  redis:
+    driver: bridge
+
+volumes:
+  postgres:

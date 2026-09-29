@@ -1,3 +1,2 @@
-// import { handlers } from '@feature/auth';
-// export const { GET, POST } = handlers;
-export function GET() {}
+import { handlers } from '@feature/auth/server';
+export const { GET, POST } = handlers;

@@ -97,19 +97,19 @@ secrets = [
   },
   {
     name        = "postgres-user"
-    description = "PostgreSQL database username for quiz service"
+    description = "PostgreSQL database username for lab service"
   },
   {
     name        = "postgres-password"
-    description = "PostgreSQL database password for quiz service"
+    description = "PostgreSQL database password for lab service"
   },
   {
     name        = "postgres-host"
-    description = "PostgreSQL database host for quiz service"
+    description = "PostgreSQL database host for lab service"
   },
   {
     name        = "postgres-database"
-    description = "PostgreSQL database name for quiz service"
+    description = "PostgreSQL database name for lab service"
   },
   {
     name        = "redis-host"
@@ -128,13 +128,6 @@ secrets = [
     description = "GitHub OAuth token for API access"
   }
 ]
-
-# -----------------------------------------------------------------------------
-# Vertex AI
-# -----------------------------------------------------------------------------
-
-enable_vertex_ai      = false
-vertex_ai_endpoint_id = "" # Leave empty if not yet deployed
 
 # -----------------------------------------------------------------------------
 # Networking

@@ -5,8 +5,8 @@ import type React from "react"
 import { useState, useEffect, useRef, useMemo } from "react"
 import { cn } from "@feature/ui/lib/utils"
 import { Mail, Rss, Search, Tag, TrendingUp } from "lucide-react"
-import { Input } from "@feature/ui/components/input"
-import { Button } from "@feature/ui/components/button"
+import { Input } from "@feature/ui/components/ui/common/input"
+import { Button } from "@feature/ui/components/ui/common/button"
 import { BlogPost } from "@feature/lab-client/lib/types"
 
 const categories = [

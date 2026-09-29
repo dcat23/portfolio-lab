@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@source "../../../features";
+
 @custom-variant dark (&:is(.dark *));
 
 /* Refined color palette with softer, more sophisticated tones */

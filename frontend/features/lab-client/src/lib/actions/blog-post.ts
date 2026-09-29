@@ -44,9 +44,8 @@ export const getPostBySlug = withApi(async (slug: string) => {
  * next-feature@0.1.2-10
  * February 23rd 2026, 5:03:47 pm
  */
-
 export const getRelatedPosts = withApi(
-  async (currentPost: BlogPost, limit: number = 3) => {
+  async (currentPost: BlogPost, limit = 3) => {
     const params = new URLSearchParams();
     params.append("limit", String(limit))
     const endpoint = `/blog/posts/${currentPost.id}/related` + params.toString();
