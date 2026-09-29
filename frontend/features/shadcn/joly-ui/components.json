@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-lyra",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "mist",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@feature/joly-ui/components/ui",
+    "utils": "@feature/joly-ui/lib/ui/utils",
+    "ui": "@feature/joly-ui/components/ui/common",
+    "lib": "@feature/joly-ui/lib/ui",
+    "hooks": "@feature/joly-ui/hooks/ui"
+  },
+  "menuColor": "default-translucent",
+  "menuAccent": "subtle",
+  "registries": {}
+}
