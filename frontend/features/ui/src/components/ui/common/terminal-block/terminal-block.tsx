@@ -6,6 +6,10 @@ import { Check, Copy, Download, Terminal } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { cn } from "cn"
 import { normalizeLines, type TerminalCommandItem, type TerminalLine } from "./types"
+import {
+  useTerminalInteractive,
+  type TerminalCommandHandler,
+} from "./use-terminal-interactive"
 import { useTerminalSequence } from "./use-terminal-sequence"
 
 export type TerminalBlockVariant =
@@ -44,6 +48,11 @@ export interface TerminalBlockProps {
   defaultCollapsed?: boolean
   /** Makes the green window dot toggle expanding the block to fill the viewport, like a real zoom */
   expandable?: boolean
+  /** Once any scripted `commands` finish playing, show a live prompt the viewer can type into */
+  interactive?: boolean
+  /** Called with each submitted command; its return becomes that command's output. Defaults to a "command not found" message */
+  onCommand?: TerminalCommandHandler
+  inputPlaceholder?: string
 }
 
 const variantStyles: Record<TerminalBlockVariant, string> = {
@@ -253,6 +262,9 @@ const TerminalBlock = React.forwardRef<HTMLDivElement, TerminalBlockProps>(
       collapsible = false,
       defaultCollapsed = false,
       expandable = false,
+      interactive = false,
+      onCommand,
+      inputPlaceholder,
       className,
     },
     ref
@@ -261,6 +273,52 @@ const TerminalBlock = React.forwardRef<HTMLDivElement, TerminalBlockProps>(
     const [isExpanded, setIsExpanded] = React.useState(false)
     const { completedCommands, commandTyped, isTypingCommand, visibleLines, isDone } =
       useTerminalSequence({ commands, animated, loop, typingSpeed, lineDelay, startDelay })
+    const {
+      history,
+      typed,
+      onChange: onTypedChange,
+      onKeyDown: onTypedKeyDown,
+    } = useTerminalInteractive({ enabled: interactive, onCommand })
+
+    const scrollRef = React.useRef<HTMLDivElement>(null)
+    // Whether the viewer was at the bottom as of the last scroll event — read
+    // in the "stick to bottom" effect below, which otherwise can't tell a
+    // manual scroll-up from a sudden jump in scrollHeight (both leave a large
+    // gap once new content has already been painted).
+    const isAtBottomRef = React.useRef(true)
+    const [showTopBlur, setShowTopBlur] = React.useState(false)
+    const effectiveMaxHeight = maxHeight ?? (interactive ? "24rem" : undefined)
+
+    // Track scroll position so the top edge-blur only shows once content is
+    // actually scrolled past, and so the view can stay pinned to the bottom
+    // (like a real terminal) as long as the viewer hasn't scrolled away from
+    // it. This only reacts to genuine scroll events (never runs eagerly on
+    // render) — measuring eagerly would happen after new content has already
+    // grown scrollHeight but before scrollTop catches up, making it look like
+    // the viewer had scrolled away every time content grows.
+    React.useEffect(() => {
+      const el = scrollRef.current
+      if (!el) return
+      const handleScroll = () => {
+        setShowTopBlur(el.scrollTop > 4)
+        isAtBottomRef.current =
+          el.scrollHeight - el.scrollTop - el.clientHeight < 80
+      }
+      el.addEventListener("scroll", handleScroll, { passive: true })
+      return () => el.removeEventListener("scroll", handleScroll)
+    })
+
+    React.useEffect(() => {
+      const el = scrollRef.current
+      if (!el) return
+      const target = el.scrollHeight - el.clientHeight
+      // Guard against a redundant assignment: setting scrollTop (even to its
+      // current value, in some browsers) dispatches a "scroll" event, which
+      // would otherwise re-trigger the listener effect above on every render.
+      if (isAtBottomRef.current && el.scrollTop !== target) {
+        el.scrollTop = el.scrollHeight
+      }
+    })
 
     const activeCommand = commands[completedCommands]
     const isDarkChrome = variant === "terminal"
@@ -269,7 +327,7 @@ const TerminalBlock = React.forwardRef<HTMLDivElement, TerminalBlockProps>(
     const outputTextClass = isDarkChrome ? "text-neutral-400" : "text-muted-foreground"
     const chromeTextClass = isDarkChrome ? "text-neutral-400" : "text-muted-foreground"
     const iconClass = isDarkChrome ? "text-neutral-400" : "text-muted-foreground"
-    const transcript = buildTranscript(commands, prompt)
+    const transcript = buildTranscript([...commands, ...history], prompt)
 
     const block = (
       <motion.div
@@ -331,13 +389,34 @@ const TerminalBlock = React.forwardRef<HTMLDivElement, TerminalBlockProps>(
         <AnimatePresence>
           {!isCollapsed && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
+              ref={scrollRef}
+              initial={false}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="overflow-auto"
-              style={maxHeight && !isExpanded ? { maxHeight } : undefined}
+              className="relative overflow-auto"
+              style={
+                effectiveMaxHeight && !isExpanded
+                  ? { maxHeight: effectiveMaxHeight }
+                  : undefined
+              }
             >
+              {effectiveMaxHeight && (
+                <div
+                  aria-hidden
+                  className={cn(
+                    "pointer-events-none absolute inset-x-0 top-0 z-10 h-8 transition-opacity duration-150",
+                    showTopBlur ? "opacity-100" : "opacity-0"
+                  )}
+                  style={{
+                    backdropFilter: "blur(6px)",
+                    WebkitBackdropFilter: "blur(6px)",
+                    maskImage: "linear-gradient(to bottom, black, transparent)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, black, transparent)",
+                  }}
+                />
+              )}
               <div
                 className="space-y-2 p-4 text-sm"
                 style={{ fontFamily: "'Courier New', Courier, monospace" }}
@@ -383,10 +462,47 @@ const TerminalBlock = React.forwardRef<HTMLDivElement, TerminalBlockProps>(
                   </div>
                 )}
 
-                {isDone && animated && (
+                {isDone && animated && !interactive && (
                   <div className="flex items-center gap-2">
                     <span className={promptClass}>{prompt}</span>
                     <BlinkingCursor className={commandTextClass} />
+                  </div>
+                )}
+
+                {interactive &&
+                  isDone &&
+                  history.map((item, index) => (
+                    <div key={`history-${index}`}>
+                      <div className="flex items-center gap-2">
+                        <span className={promptClass}>{prompt}</span>
+                        <span className={commandTextClass}>{item.command}</span>
+                      </div>
+                      <TerminalOutput
+                        lines={normalizeLines(item.output)}
+                        visibleCount={normalizeLines(item.output).length}
+                        wrapLongLines={wrapLongLines}
+                        className={outputTextClass}
+                      />
+                    </div>
+                  ))}
+
+                {interactive && isDone && (
+                  <div className="flex items-center gap-2">
+                    <span className={promptClass}>{prompt}</span>
+                    <input
+                      value={typed}
+                      onChange={(e) => onTypedChange(e.target.value)}
+                      onKeyDown={onTypedKeyDown}
+                      placeholder={inputPlaceholder}
+                      spellCheck={false}
+                      autoComplete="off"
+                      autoCapitalize="off"
+                      className={cn(
+                        "flex-1 border-none bg-transparent p-0 outline-none",
+                        commandTextClass
+                      )}
+                      style={{ fontFamily: "'Courier New', Courier, monospace" }}
+                    />
                   </div>
                 )}
               </div>
