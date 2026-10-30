@@ -3,6 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import ReactQueryProvider from "../lib/providers/react-query-provider";
 import { ThemeProvider } from "../lib/providers/theme-provider";
+import { Analytics } from '@vercel/analytics/next';
 
 
 interface Props {
@@ -21,6 +22,7 @@ const Providers = ({ children }: Props) => {
       >
         <ReactQueryProvider>
           <Toaster position="bottom-right" />
+          <Analytics />
           {children}
         </ReactQueryProvider>
       </ThemeProvider>
